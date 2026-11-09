@@ -1,0 +1,622 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LOOKMATCH</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: coluna de app para iPhone (max 440px), vidro sobre azul-noite, navegação em pílula na base. */
+:root{
+  color-scheme:dark;
+  --bg:#080B12; --bg2:#0D121C;
+  --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.17);
+  --fg:#E8ECF4; --muted:#8C96AA; --dim:#69738A;
+  --accent:#5B9BFF; --accent2:#9DC0FF; --accent-strong:#2F6FE4;
+  --accent-soft:rgba(91,155,255,.16); --accent-line:rgba(91,155,255,.45);
+  --ok:#43D49A; --warn:#EDB84D; --bad:#EE6A66;
+  --ok-soft:rgba(67,212,154,.13); --warn-soft:rgba(237,184,77,.13); --bad-soft:rgba(238,106,102,.14);
+  --font-display:'Instrument Serif',Georgia,serif;
+  --font-body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background-color:var(--bg);
+  background-image:radial-gradient(120% 55% at 0% 0%,rgba(91,155,255,.20),transparent 62%),radial-gradient(90% 45% at 100% 100%,rgba(91,155,255,.10),transparent 60%);
+  background-attachment:fixed;color:var(--fg);font:14px/1.45 var(--font-body);display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
+.app{width:100%;max-width:440px;height:100%;display:flex;flex-direction:column;gap:10px;min-width:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 12px}
+@media(min-width:700px){.app{height:min(100%,880px);margin-block:auto;border:1px solid var(--line);border-radius:38px;background:rgba(255,255,255,.02);padding-inline:20px}}
+.screen{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:none;padding:6px 0 18px}
+.screen::-webkit-scrollbar{display:none}
+.flow{display:flex;flex-direction:column;gap:14px;min-width:0}
+.flow>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+.flow>*:nth-child(2){animation-delay:.04s}.flow>*:nth-child(3){animation-delay:.08s}.flow>*:nth-child(4){animation-delay:.12s}.flow>*:nth-child(5){animation-delay:.16s}.flow>*:nth-child(n+6){animation-delay:.2s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0}
+.display{font-family:var(--font-display);font-weight:400;font-size:36px;line-height:1.04;letter-spacing:-.01em;margin:4px 0 0;text-wrap:balance}
+.display em{color:var(--accent2)}
+.h2{font-family:var(--font-display);font-weight:400;font-size:24px;line-height:1.1;margin:0;text-wrap:balance}
+.muted{color:var(--muted)}.small{font-size:12px}
+.row{display:flex;align-items:center;gap:12px;min-width:0}.between{justify-content:space-between}.wrap{flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:16px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);min-width:0}
+.card.hero{background:linear-gradient(160deg,rgba(91,155,255,.16),rgba(255,255,255,.04));border-color:var(--accent-line)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:12px 0 0}
+.kv dt{color:var(--muted);font-size:12px}.kv dd{margin:0;font-weight:600;text-align:right;min-width:0}
+.link{appearance:none;background:none;border:0;color:var(--accent);font:700 12px var(--font-body);cursor:pointer;padding:6px 0}
+.btn{appearance:none;border:1px solid var(--line2);background:var(--glass);color:var(--fg);font:700 13px var(--font-body);padding:12px 16px;min-height:44px;border-radius:14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center;transition:transform .15s,background .2s,border-color .2s}
+.btn:hover{background:var(--glass2)}.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent-strong);border-color:transparent;color:#fff}.btn.primary:hover{background:#3F7DF0}
+.btn.danger{color:var(--bad);border-color:rgba(238,106,102,.4)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.block{width:100%}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font:700 11px var(--font-body);border:1px solid;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{color:var(--ok);background:var(--ok-soft);border-color:rgba(67,212,154,.3)}
+.pill.warn{color:var(--warn);background:var(--warn-soft);border-color:rgba(237,184,77,.3)}
+.pill.bad{color:var(--bad);background:var(--bad-soft);border-color:rgba(238,106,102,.32)}
+.pill.acc{color:var(--accent2);background:var(--accent-soft);border-color:var(--accent-line)}
+.pill.mute{color:var(--muted);background:var(--glass);border-color:var(--line)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-2px;padding:2px}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chip{appearance:none;flex:none;border:1px solid var(--line);background:var(--glass);color:var(--muted);font:600 12.5px var(--font-body);padding:9px 13px;min-height:38px;border-radius:999px;cursor:pointer;transition:all .2s}
+.chip[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent2)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:4px;gap:4px}
+.seg button{appearance:none;border:0;background:none;color:var(--muted);font:700 13px var(--font-body);min-height:40px;border-radius:12px;cursor:pointer;transition:all .2s}
+.seg button[aria-selected=true]{background:var(--accent-strong);color:#fff}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>span{font-size:12px;color:var(--muted);font-weight:600}
+.field input,.field select,.field textarea{width:100%;min-width:0;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--fg);font:500 14px var(--font-body);padding:11px 12px;min-height:44px;border-radius:12px}
+.field select option{background:#12182A;color:var(--fg)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;appearance:none;background:none;border:0;color:var(--fg);font:600 13px var(--font-body);text-align:left;padding:4px 0;cursor:pointer}
+.switch i{flex:none;width:44px;height:26px;border-radius:99px;background:var(--glass2);border:1px solid var(--line2);position:relative;transition:background .2s}
+.switch i::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:all .2s}
+.switch[aria-checked=true] i{background:var(--accent-strong);border-color:transparent}
+.switch[aria-checked=true] i::after{left:21px;background:#fff}
+/* tabbar */
+.tabbar{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:6px;border-radius:26px;background:rgba(18,24,40,.74);border:1px solid var(--line2);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%)}
+.tabbar button{appearance:none;border:0;background:none;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 7px;min-height:52px;border-radius:20px;cursor:pointer;font:700 10.5px var(--font-body);transition:all .25s}
+.tabbar button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-current=page]{color:var(--accent2);background:var(--accent-soft)}
+/* closet */
+.tile{appearance:none;text-align:left;color:inherit;font:inherit;background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:10px;display:flex;flex-direction:column;gap:8px;cursor:pointer;min-width:0;transition:transform .2s,border-color .2s}
+.tile:hover{border-color:var(--line2);transform:translateY(-2px)}
+.tile .art{aspect-ratio:1/1;border-radius:14px;background:radial-gradient(70% 70% at 50% 40%,rgba(255,255,255,.10),rgba(255,255,255,.02));display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tile .art svg{width:78%;height:78%}.tile .art img{width:100%;height:100%;object-fit:cover}
+.tile .name{font-weight:700;font-size:13px;line-height:1.25;display:block}
+.tile .sub{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-top:2px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(255,255,255,.3);flex:none}
+/* deck */
+.deck{position:relative;height:clamp(430px,60vh,530px)}
+.swipe-card{position:absolute;inset:0;border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04));border:1px solid var(--line2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:14px;display:flex;flex-direction:column;gap:8px;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s;box-shadow:0 22px 50px rgba(0,0,0,.45)}
+.swipe-card.back{transform:scale(.94) translateY(14px);opacity:.5;pointer-events:none}
+.swipe-card .art{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;border-radius:20px;background:radial-gradient(70% 60% at 50% 40%,rgba(255,255,255,.09),transparent 72%)}
+.swipe-card .art svg{height:100%;width:auto;max-width:100%}
+.stamp{position:absolute;top:56px;padding:5px 12px;border:2px solid;border-radius:10px;font:800 15px var(--font-body);letter-spacing:.12em;opacity:0;pointer-events:none}
+.stamp.like{left:16px;color:var(--ok);transform:rotate(-9deg)}.stamp.nope{right:16px;color:var(--bad);transform:rotate(9deg)}
+.actions{display:flex;justify-content:center;gap:14px;align-items:center;margin-top:14px}
+.round{appearance:none;width:52px;height:52px;border-radius:50%;border:1px solid var(--line2);background:var(--glass);color:var(--fg);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s}
+.round:active{transform:scale(.92)}.round.big{width:64px;height:64px}
+.round svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.round.yes{color:var(--ok);border-color:rgba(67,212,154,.45);background:var(--ok-soft)}
+.round.no{color:var(--bad);border-color:rgba(238,106,102,.45);background:var(--bad-soft)}
+/* analysis */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bl{display:flex;justify-content:space-between;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+.track{height:6px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden;margin:5px 0 3px}
+.track i{display:block;height:100%;border-radius:9px;background:var(--accent);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.track i.warn{background:var(--warn)}.track i.bad{background:var(--bad)}
+.bar small{color:var(--dim);font-size:11.5px}
+.reasons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.reasons li{padding-left:18px;position:relative;font-size:13px;line-height:1.4}
+.reasons li::before{content:"";position:absolute;left:0;top:6px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.reasons li.ok::before{background:var(--ok)}.reasons li.warn::before{background:var(--warn)}.reasons li.bad::before{background:var(--bad)}.reasons li.info::before{background:var(--dim)}
+.ring text{font:400 22px var(--font-display);fill:var(--fg);text-anchor:middle;dominant-baseline:central}
+/* picker */
+.prow{display:flex;flex-direction:column;gap:8px}
+.hscroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.hscroll::-webkit-scrollbar{display:none}
+.ptile{appearance:none;flex:none;width:82px;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:8px 6px;color:var(--muted);font:600 10.5px/1.25 var(--font-body);display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all .2s}
+.ptile svg{width:42px;height:42px}
+.ptile span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:center}
+.ptile[aria-pressed=true]{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent2)}
+.compwrap{display:flex;justify-content:center;border-radius:20px;background:radial-gradient(70% 60% at 50% 40%,rgba(255,255,255,.09),transparent 72%);padding:6px}
+.compwrap svg{width:100%;max-width:230px;height:auto}
+.note{font-size:12px;color:var(--muted);line-height:1.45;padding:10px 12px;border-radius:12px;background:var(--glass);border:1px dashed var(--line2)}
+.favitem{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center}
+.favitem .th{border-radius:14px;background:rgba(255,255,255,.04);padding:4px}
+.favitem .th svg{width:100%;height:auto;display:block}
+.photoprev{width:100%;max-height:200px;object-fit:cover;border-radius:16px;border:1px solid var(--line)}
+.legend{display:grid;gap:8px}
+.legend div{display:flex;gap:10px;align-items:flex-start;font-size:12.5px}
+/* sheet + toast */
+.overlay[hidden]{display:none}
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(3,5,10,.62);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{width:100%;max-width:460px;max-height:88%;overflow-y:auto;background:#10172A;border:1px solid var(--line2);border-bottom:0;border-radius:28px 28px 0 0;padding:12px max(18px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));animation:up .3s cubic-bezier(.2,.8,.2,1) both;display:flex;flex-direction:column;gap:14px}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.grab{width:42px;height:4px;border-radius:9px;background:var(--line2);margin:0 auto}
+.icon-btn{appearance:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--fg);display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:60;max-width:min(380px,calc(100% - 32px));background:rgba(22,30,50,.95);border:1px solid var(--line2);border-radius:16px;padding:12px 16px;font-weight:600;font-size:13px;opacity:0;pointer-events:none;transition:all .3s}
+.toast.on{opacity:1;transform:translateX(-50%)}
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="g-camiseta" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M34 16 L44 11 Q50 20 56 11 L66 16 L87 30 L77 45 L69 39 L69 87 L31 87 L31 39 L23 45 L13 30 Z"/></g></symbol>
+<symbol id="g-social" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M34 16 L44 11 L50 23 L56 11 L66 16 L85 30 L83 76 L73 76 L70 40 L70 89 L30 89 L30 40 L27 76 L17 76 L15 30 Z"/><path d="M50 23 V89" fill="none"/><path d="M44 11 L50 24 L56 11" fill="none"/></g></symbol>
+<symbol id="g-calca" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M32 8 H68 L75 93 H54 L50 38 L46 93 H25 Z"/><path d="M32 17 H68" fill="none"/></g></symbol>
+<symbol id="g-bermuda" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M30 14 H70 L77 64 H54 L50 38 L46 64 H23 Z"/><path d="M30 22 H70" fill="none"/></g></symbol>
+<symbol id="g-saia" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M38 16 H62 L82 88 H18 Z"/><path d="M38 24 H62" fill="none"/></g></symbol>
+<symbol id="g-vestido" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M40 6 L46 6 L50 15 L54 6 L60 6 L62 34 L80 92 H20 L38 34 Z"/><path d="M38 34 H62" fill="none"/></g></symbol>
+<symbol id="g-jaqueta" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M30 14 L42 9 L50 18 L58 9 L70 14 L89 30 L87 78 L76 78 L72 42 L72 91 H28 L28 42 L24 78 L13 78 L11 30 Z"/><path d="M50 18 V91" fill="none"/></g></symbol>
+<symbol id="g-blazer" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M30 12 L42 7 L50 30 L58 7 L70 12 L89 28 L87 80 L76 80 L72 44 L72 92 H28 L28 44 L24 80 L13 80 L11 28 Z"/><path d="M42 7 L50 44 L58 7" fill="none"/><path d="M50 44 V92" fill="none"/></g></symbol>
+<symbol id="g-tenis" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M8 62 Q8 50 20 48 L34 46 L42 56 Q56 58 68 52 L86 58 Q94 62 94 70 V76 H8 Z"/><path d="M8 69 H94" fill="none"/><path d="M34 46 L38 58" fill="none"/></g></symbol>
+<symbol id="g-sapato" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M8 58 Q10 46 26 46 L40 48 Q56 60 80 58 Q94 60 94 68 V76 H8 Z"/><path d="M8 69 H94" fill="none"/></g></symbol>
+<symbol id="g-relogio" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><rect x="40" y="6" width="20" height="30" rx="4"/><rect x="40" y="64" width="20" height="30" rx="4"/><circle cx="50" cy="50" r="19"/><path d="M50 40 V50 L57 54" fill="none"/></g></symbol>
+<symbol id="g-cinto" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><rect x="6" y="42" width="88" height="16" rx="3"/><rect x="40" y="38" width="20" height="24" rx="3" fill="none"/></g></symbol>
+<symbol id="g-bone" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><path d="M14 62 Q14 28 50 28 Q86 28 86 62 Z"/><path d="M60 62 H94 Q94 72 80 72 H60 Z"/></g></symbol>
+<symbol id="g-acc" viewBox="0 0 100 100"><g fill="currentColor" stroke="rgba(150,162,185,.55)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"><rect x="22" y="36" width="56" height="50" rx="6"/><path d="M36 36 Q36 14 50 14 Q64 14 64 36" fill="none"/></g></symbol>
+</defs></svg>
+<div class="app">
+  <main id="screen" class="screen" tabindex="-1"></main>
+  <nav class="tabbar" id="tabbar" aria-label="Navegação principal"></nav>
+</div>
+<div class="overlay" id="overlay" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="grab"></div><div class="row between"><h2 class="h2" id="sheetTitle"></h2><button class="icon-btn" data-act="close" aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="sheetBody"></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n));
+const rnd=Math.round;
+
+/* ===== dados base ===== */
+const CATS=[['camiseta','Camisetas e blusas'],['social','Camisas sociais'],['calca','Calças'],['bermuda','Bermudas'],['vestido','Saias e vestidos'],['jaqueta','Jaquetas e casacos'],['tenis','Tênis'],['sapato','Sapatos sociais'],['acessorio','Acessórios']];
+const CATL=Object.fromEntries(CATS);
+const FORM=['Casual','Esporte fino','Social','Formal'];
+const LOCAIS=['Shopping','Restaurante','Escritório','Igreja','Teatro','Praia','Parque','Casa de amigos'];
+const OCASIOES=['Evento especial','Passeio','Trabalho','Jantar','Aniversário','Cerimônia','Reunião','Encontro'];
+const OCUSO=['Dia a dia','Trabalho','Passeio','Jantar','Evento especial','Cerimônia','Esporte','Viagem'];
+const ESTILOS=['Clássico','Casual','Esportivo','Minimalista','Streetwear','Elegante'];
+const TECIDOS=['Algodão','Linho','Jeans','Sarja','Lã','Poliéster','Couro','Sintético','Malha','Não identificado'];
+const CORTES=['Justo','Slim','Reto','Solto','Oversize','Amplo','Estruturado'];
+const SUBS={vestido:[['vestido','Vestido'],['saia','Saia']],jaqueta:[['jaqueta','Jaqueta'],['blazer','Blazer'],['casaco','Casaco pesado'],['cortavento','Corta-vento']],acessorio:[['relogio','Relógio'],['cinto','Cinto'],['bone','Boné'],['outro','Outro']]};
+const COLORS=[['Branco','#F2F2F0',1],['Off-white','#E8E1D2',1],['Preto','#141518',1],['Cinza','#8A8F98',1],['Grafite','#40444C',1],['Azul-marinho','#1F2B47',1],['Jeans','#3B5278',1],['Bege','#C9B28E',1],['Caqui','#A8946A',1],['Marrom','#5C3F2B',1],['Verde-oliva','#6B7344',1],['Azul claro','#9CC1EE',1],['Azul','#2F6FDE',0],['Vermelho','#C8312F',0],['Verde','#2E7D4F',0],['Rosa','#E58CA6',0],['Amarelo','#E8C547',0],['Laranja','#E07B2E',0],['Roxo','#6E4BB0',0]];
+const CMAP={};COLORS.forEach(c=>CMAP[c[0]]={hex:c[1],n:c[2]});
+const mk=(id,nome,cat,cor,o)=>Object.assign({id,nome,cat,corNome:cor,cor:CMAP[cor].hex,neutro:!!CMAP[cor].n,sample:true},o);
+const SAMPLE=[
+mk('p1','Camiseta básica branca','camiseta','Branco',{tecido:'Algodão',corte:'Reto',estilo:'Minimalista',formal:0,calor:1,oc:['Dia a dia','Passeio','Viagem']}),
+mk('p2','Camiseta preta oversize','camiseta','Preto',{tecido:'Algodão',corte:'Oversize',estilo:'Streetwear',formal:0,calor:1,oc:['Dia a dia','Passeio']}),
+mk('p3','Camisa social branca','social','Branco',{tecido:'Algodão',corte:'Slim',estilo:'Clássico',formal:3,calor:1,oc:['Trabalho','Jantar','Evento especial','Cerimônia']}),
+mk('p4','Camisa social azul clara','social','Azul claro',{tecido:'Algodão',corte:'Slim',estilo:'Clássico',formal:2,calor:1,oc:['Trabalho','Jantar','Passeio']}),
+mk('p5','Calça de alfaiataria preta','calca','Preto',{tecido:'Lã',corte:'Reto',estilo:'Elegante',formal:3,calor:1,oc:['Trabalho','Jantar','Evento especial','Cerimônia']}),
+mk('p6','Calça jeans escura','calca','Jeans',{tecido:'Jeans',corte:'Reto',estilo:'Casual',formal:1,calor:1,oc:['Dia a dia','Passeio','Jantar']}),
+mk('p7','Calça chino bege','calca','Bege',{tecido:'Sarja',corte:'Slim',estilo:'Clássico',formal:2,calor:1,oc:['Trabalho','Passeio','Jantar']}),
+mk('p8','Bermuda de sarja caqui','bermuda','Caqui',{tecido:'Sarja',corte:'Reto',estilo:'Casual',formal:0,calor:0,oc:['Dia a dia','Passeio','Viagem']}),
+mk('p9','Vestido midi preto','vestido','Preto',{sub:'vestido',tecido:'Poliéster',corte:'Estruturado',estilo:'Elegante',formal:3,calor:1,oc:['Jantar','Evento especial','Cerimônia']}),
+mk('p10','Saia midi cinza','vestido','Cinza',{sub:'saia',tecido:'Malha',corte:'Reto',estilo:'Minimalista',formal:2,calor:0,oc:['Trabalho','Passeio','Jantar']}),
+mk('p11','Blazer azul-marinho','jaqueta','Azul-marinho',{sub:'blazer',tecido:'Lã',corte:'Estruturado',estilo:'Clássico',formal:3,calor:1,oc:['Trabalho','Jantar','Evento especial','Cerimônia']}),
+mk('p12','Jaqueta jeans','jaqueta','Jeans',{sub:'jaqueta',tecido:'Jeans',corte:'Reto',estilo:'Casual',formal:0,calor:1,oc:['Dia a dia','Passeio']}),
+mk('p13','Corta-vento impermeável','jaqueta','Grafite',{sub:'cortavento',tecido:'Poliéster',corte:'Solto',estilo:'Esportivo',formal:0,calor:1,imperm:true,oc:['Dia a dia','Viagem','Esporte']}),
+mk('p14','Tênis branco minimalista','tenis','Branco',{tecido:'Couro',corte:'Reto',estilo:'Minimalista',formal:1,calor:0,chuva:1,oc:['Dia a dia','Passeio','Trabalho']}),
+mk('p15','Tênis de corrida cinza','tenis','Cinza',{tecido:'Sintético',corte:'Reto',estilo:'Esportivo',formal:0,calor:0,chuva:2,oc:['Esporte','Dia a dia']}),
+mk('p16','Sapato social preto','sapato','Preto',{tecido:'Couro',corte:'Reto',estilo:'Clássico',formal:3,calor:0,chuva:1,oc:['Trabalho','Jantar','Evento especial','Cerimônia']}),
+mk('p17','Sapato derby marrom','sapato','Marrom',{tecido:'Couro',corte:'Reto',estilo:'Clássico',formal:2,calor:0,chuva:1,oc:['Trabalho','Jantar','Passeio']}),
+mk('p18','Relógio prateado','acessorio','Cinza',{sub:'relogio',tecido:'Não identificado',corte:'Reto',estilo:'Clássico',formal:3,calor:0,oc:['Trabalho','Jantar','Evento especial']}),
+mk('p19','Cinto de couro preto','acessorio','Preto',{sub:'cinto',tecido:'Couro',corte:'Reto',estilo:'Clássico',formal:3,calor:0,oc:['Trabalho','Jantar','Evento especial']}),
+mk('p20','Boné preto','acessorio','Preto',{sub:'bone',tecido:'Algodão',corte:'Reto',estilo:'Streetwear',formal:0,calor:0,oc:['Dia a dia','Passeio']})
+];
+/* Valores de exemplo, sem conexão com serviço meteorológico: [mín, máx, sensação, chuva %, descrição] */
+const WX={'São Paulo':[18,27,28,55,'Parcialmente nublado, chuva à tarde'],'Curitiba':[15,24,22,55,'Nublado com pancadas'],'Rio de Janeiro':[22,31,34,40,'Sol com nuvens'],'Belo Horizonte':[18,29,28,45,'Sol e nuvens'],'Porto Alegre':[17,27,27,35,'Poucas nuvens'],'Maringá':[20,32,33,45,'Quente, pancadas isoladas'],'Londrina':[20,31,32,50,'Quente com chance de chuva'],'Florianópolis':[19,27,28,50,'Nublado'],'Brasília':[17,28,27,60,'Chuva ao fim do dia'],'Salvador':[23,30,33,40,'Sol com nuvens']};
+function weatherFor(city){const k=Object.keys(WX).find(x=>x.toLowerCase()===String(city||'').trim().toLowerCase());const a=WX[k]||[18,27,27,40,'Tempo variável'];return{min:a[0],max:a[1],feel:a[2],rain:a[3],desc:a[4],sample:true,city:k||city||''}}
+
+/* ===== estado ===== */
+const LS='lookmatch.v1';
+const pad=n=>String(n).padStart(2,'0');
+function isoPlus(n){const d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function defaults(){return{added:[],hidden:[],ctx:{local:'Shopping',ocasiao:'Evento especial',form:3,obrig:false,cidade:'São Paulo',data:isoPlus(6),hora:'19:30',detalhes:''},weather:null,favs:[],prefs:{cor:{},estilo:{},peca:{}},disliked:[],seen:[],usage:{},stats:{likes:0,nopes:0}}}
+function load(){const d=defaults();try{const raw=localStorage.getItem(LS);if(raw){const j=JSON.parse(raw);Object.assign(d,j);d.ctx=Object.assign(defaults().ctx,j.ctx||{});d.prefs=Object.assign({cor:{},estilo:{},peca:{}},j.prefs||{});d.stats=Object.assign({likes:0,nopes:0},j.stats||{})}}catch(e){}
+Object.assign(d,{tab:'inicio',mode:'descobrir',filtro:'todas',favFiltro:'todos',cmp:[],deck:[],di:0,deckSig:'',draft:null,prov:null,av:null,confirmDel:null});
+if(!d.weather)d.weather=weatherFor(d.ctx.cidade);return d}
+const S=load();
+function save(){try{localStorage.setItem(LS,JSON.stringify({added:S.added,hidden:S.hidden,ctx:S.ctx,weather:S.weather,favs:S.favs,prefs:S.prefs,disliked:S.disliked,usage:S.usage,stats:S.stats}))}catch(e){}}
+function closet(){return SAMPLE.filter(p=>!S.hidden.includes(p.id)).concat(S.added)}
+function byId(id){return closet().find(p=>p.id===id)}
+function setPath(path,val){const k=path.split('.');let o=S;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=val}
+
+/* ===== peças e looks ===== */
+function slotOf(p){const c=p.cat;if(c==='camiseta'||c==='social')return'top';if(c==='calca'||c==='bermuda')return'bottom';if(c==='vestido')return p.sub==='saia'?'bottom':'full';if(c==='jaqueta')return'outer';if(c==='tenis'||c==='sapato')return'shoes';return'acc'}
+function sym(p){const m={camiseta:'g-camiseta',social:'g-social',calca:'g-calca',bermuda:'g-bermuda',tenis:'g-tenis',sapato:'g-sapato'};if(m[p.cat])return m[p.cat];if(p.cat==='vestido')return p.sub==='saia'?'g-saia':'g-vestido';if(p.cat==='jaqueta')return p.sub==='blazer'?'g-blazer':'g-jaqueta';return({relogio:'g-relogio',cinto:'g-cinto',bone:'g-bone'})[p.sub]||'g-acc'}
+function emptySel(){return{top:null,bottom:null,full:null,outer:null,shoes:null,acc:[]}}
+function asLook(ids){const L={top:null,bottom:null,full:null,outer:null,shoes:null,acc:[]};ids.forEach(id=>{const p=byId(id);if(!p)return;const s=slotOf(p);if(s==='acc')L.acc.push(p);else L[s]=p});return L}
+function selToLook(sel){return asLook([sel.top,sel.bottom,sel.full,sel.outer,sel.shoes].concat(sel.acc||[]).filter(Boolean))}
+function selFromLook(L){return{top:L.top?L.top.id:null,bottom:L.bottom?L.bottom.id:null,full:L.full?L.full.id:null,outer:L.outer?L.outer.id:null,shoes:L.shoes?L.shoes.id:null,acc:L.acc.map(p=>p.id)}}
+function lpieces(L){return[L.outer,L.top,L.bottom,L.full,L.shoes].concat(L.acc).filter(Boolean)}
+function lookKey(L){return lpieces(L).map(p=>p.id).sort().join('+')}
+function bodyKey(L){return[L.top,L.bottom,L.full].map(p=>p?p.id:'-').join('|')}
+function valid(L){return !!(L.shoes&&((L.top&&L.bottom)||L.full))}
+
+/* ===== regras de avaliação (heurísticas clássicas de estilo, ajustáveis) ===== */
+function hsl(hex){const n=parseInt(hex.slice(1),16),r=(n>>16&255)/255,g=(n>>8&255)/255,b=(n&255)/255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;let h=0,s=0;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60}return{h,s,l}}
+const hdiff=(a,b)=>{const d=Math.abs(a-b)%360;return d>180?360-d:d};
+function harmonia(L,add){
+  const cs=[L.top,L.bottom,L.full,L.outer,L.shoes].filter(Boolean);let s=92;
+  const hues=[];cs.filter(p=>!p.neutro).forEach(p=>{const h=hsl(p.cor).h;if(!hues.some(x=>hdiff(x,h)<20))hues.push(h)});
+  if(hues.length===0)add('ok','harmonia','Paleta de cores neutras. Combina com facilidade.');
+  else if(hues.length===1){s=95;add('ok','harmonia','Uma cor de destaque sobre base neutra deixa o look equilibrado.')}
+  else if(hues.length===2){const d=hdiff(hues[0],hues[1]);if(d<40){s=88;add('ok','harmonia','Cores próximas no círculo cromático formam um conjunto harmônico.')}else if(d>=150){s=80;add('info','harmonia','Cores complementares dão contraste forte. Funciona melhor com o resto em tons neutros.')}else{s=68;add('warn','harmonia','Duas cores fortes disputam a atenção.')}}
+  else{s=55;add('warn','harmonia','Três ou mais cores fortes deixam o look carregado.')}
+  const black=cs.some(p=>p.corNome==='Preto'),brown=cs.some(p=>p.corNome==='Marrom');
+  if(black&&brown){s-=8;add('info','harmonia','Preto junto com marrom pede cuidado e costuma funcionar melhor em doses pequenas.')}
+  const belt=L.acc.find(p=>p.sub==='cinto');
+  if(belt&&L.shoes&&['Preto','Marrom'].includes(belt.corNome)&&['Preto','Marrom'].includes(L.shoes.corNome)&&belt.corNome!==L.shoes.corNome){s-=8;add('warn','harmonia','Cinto e sapato em tons diferentes quebram a regra clássica de manter os dois combinando.')}
+  return clamp(s)}
+function proporcao(L,add){
+  let s=90;
+  if(L.full){add('ok','proporcao','O vestido define a silhueta sozinho, sem conflito de volumes.');return s}
+  const t=L.top,b=L.bottom;if(!t||!b)return s;
+  const vt=['Oversize','Solto','Amplo'].includes(t.corte),vb=['Solto','Amplo'].includes(b.corte);
+  if(vt&&vb){s=64;add('warn','proporcao','Volume em cima e embaixo achata a silhueta. Vale deixar um dos lados mais justo.')}
+  else if(vt){s=94;add('ok','proporcao','Parte de cima ampla com parte de baixo ajustada cria equilíbrio.')}
+  else if(vb){s=88;add('ok','proporcao','Parte de baixo ampla equilibrada por uma parte de cima mais ajustada.')}
+  else{s=90;add('ok','proporcao','Modelagens retas e ajustadas mantêm a proporção limpa.')}
+  return s}
+function estilo(L,add){
+  const cs=[L.top,L.bottom,L.full,L.outer,L.shoes].filter(Boolean);if(!cs.length)return 80;
+  const f=cs.map(p=>p.formal),sp=Math.max.apply(null,f)-Math.min.apply(null,f);
+  let s=sp<=1?95:sp===2?78:56;
+  if(sp<=1)add('ok','estilo','As peças falam o mesmo idioma de estilo.');
+  else if(sp===2)add('info','estilo','Mistura de níveis de formalidade. Funciona quando é intencional.');
+  else add('warn','estilo','As peças estão em níveis de formalidade muito distantes entre si.');
+  const es=new Set(cs.map(p=>p.estilo));
+  if(es.has('Esportivo')&&(es.has('Elegante')||es.has('Clássico'))){s-=12;add('warn','estilo','Peça esportiva junto de peças clássicas quebra a coerência do conjunto.')}
+  return clamp(s)}
+const AMB={
+'Escritório':[{t:p=>p.cat==='bermuda',pen:25,m:'costuma destoar em escritório'},{t:p=>p.sub==='bone',pen:15,m:'costuma destoar em ambiente profissional'}],
+'Igreja':[{t:p=>p.cat==='bermuda',pen:25,m:'costuma ser evitada em igrejas'},{t:p=>p.sub==='bone',pen:15,m:'costuma ser tirado em igrejas'}],
+'Teatro':[{t:p=>p.cat==='bermuda',pen:20,m:'costuma destoar em teatro'},{t:p=>p.sub==='bone',pen:12,m:'costuma ser evitado em teatro'}],
+'Restaurante':[{t:p=>p.cat==='bermuda',pen:15,m:'costuma destoar em restaurante',minR:1},{t:p=>p.sub==='bone',pen:10,m:'costuma ser evitado à mesa',minR:1}],
+'Praia':[{t:p=>p.cat==='sapato',pen:35,m:'não combina com areia e praia'},{t:p=>p.sub==='blazer',pen:20,m:'é pesado para a praia'},{t:p=>p.cat==='calca'&&p.formal>=3,pen:15,m:'não é a escolha mais confortável para a praia'}],
+'Parque':[{t:p=>p.cat==='sapato',pen:25,m:'costuma ser desconfortável em parque'}]};
+function ambiente(L,add){
+  const ctx=S.ctx;let s=100,hit=false;
+  (AMB[ctx.local]||[]).forEach(r=>{if(r.minR&&ctx.form<r.minR)return;lpieces(L).filter(r.t).forEach(p=>{s-=r.pen;hit=true;add('warn','ambiente',p.nome+' '+r.m+'.')})});
+  if(!hit)add('ok','ambiente',ctx.local==='Shopping'?'Shopping não impõe regra própria. O que pesa aqui é o tipo de evento.':'Nada no conjunto destoa de '+ctx.local.toLowerCase()+'.');
+  return clamp(s)}
+function clima(L,add){
+  const wx=S.weather;if(!wx){add('info','clima','Previsão ainda não consultada. Abra Destino para avaliar o clima.');return 80}
+  const f=wx.feel,cs=[L.top,L.bottom,L.full,L.outer].filter(Boolean),tot=cs.reduce((a,p)=>a+(p.calor||0),0);
+  const T=f>=29?1:f>=18?2:f>=14?3:4,diff=tot-T;let s=100;
+  if(f>=24&&diff>0){s-=diff*12;add('warn','clima','Com sensação de '+f+'°C, o conjunto tem camadas demais. Tecidos leves ajudam.')}
+  else if(f<18&&diff<0){s-=-diff*14;add('warn','clima','Com sensação de '+f+'°C, falta uma camada. Um casaco ou blazer por cima ajuda.')}
+  else{s-=Math.abs(diff)*(f>=18&&f<24?6:0);add('ok','clima','Camadas adequadas para sensação de '+f+'°C.')}
+  if(wx.rain>=50&&L.shoes){const pen=(2-(L.shoes.chuva==null?1:L.shoes.chuva))*9;if(pen>0){s-=pen;add('warn','clima',L.shoes.nome+' sofre com chuva. A previsão indica '+wx.rain+'% de chance.')}}
+  if(wx.rain>=50&&L.outer&&L.outer.imperm){s=Math.min(100,s+8);add('ok','clima','O casaco impermeável protege da chuva prevista.')}
+  else if(wx.rain>=60){s-=6;add('info','clima','Chuva provável. Vale levar guarda-chuva.')}
+  return clamp(s)}
+function evaluate(L){
+  const ctx=S.ctx,R=ctx.form,obrig=!!ctx.obrig,rs=[],add=(tone,area,text)=>rs.push({tone,area,text});
+  const h=harmonia(L,add),pr=proporcao(L,add),es=estilo(L,add);
+  let oc=100,red=false,yellow=false;
+  [L.top,L.bottom,L.full,L.outer,L.shoes].filter(Boolean).forEach(p=>{const d=R-p.formal;
+    if((R>=2&&d>=2)||(obrig&&d>=1)){red=true;oc-=30;add('bad','ocasiao',p.nome+' fica abaixo do nível '+FORM[R]+(obrig?' exigido no convite.':' pedido para este evento.'))}
+    else if(d>=1){yellow=true;oc-=12;add('warn','ocasiao',p.nome+' é um pouco mais casual do que o nível '+FORM[R]+'.')}
+    else if(R===0&&p.formal>=3){yellow=true;oc-=8;add('warn','ocasiao',p.nome+' pode ficar formal demais para um evento casual.')}});
+  L.acc.forEach(p=>{if(R>=2&&p.formal<=0){yellow=true;oc-=6;add('warn','ocasiao',p.nome+' não acompanha o nível '+FORM[R]+'.')}});
+  if(!red&&!yellow)add('ok','ocasiao','As peças atendem ao nível '+FORM[R]+' pedido para '+ctx.ocasiao.toLowerCase()+'.');
+  oc=clamp(oc);if(red)oc=Math.min(oc,30);
+  const amb=ambiente(L,add),cl=clima(L,add);
+  let total=rnd(h*.18+pr*.14+es*.14+oc*.26+amb*.10+cl*.18);
+  const flag=(red||amb<55)?'vermelho':(yellow||amb<80||cl<72)?'amarelo':'verde';
+  let capped=false;if(flag==='vermelho'&&total>54){total=54;capped=true}
+  const ord={bad:0,warn:1,info:2,ok:3};
+  rs.sort((a,b)=>ord[a.tone]-ord[b.tone]);
+  return{total,flag,capped,crit:{harmonia:h,proporcao:pr,estilo:es,ocasiao:oc,ambiente:amb,clima:cl},reasons:rs.slice(0,8)}}
+
+/* ===== geração de combinações ===== */
+function sig(){return JSON.stringify([S.ctx,S.weather,closet().map(p=>p.id)])}
+let _c={sig:'',list:[]};
+function ranked(){
+  const sg=sig();if(_c.sig===sg)return _c.list;
+  const C=closet(),g=s=>C.filter(p=>slotOf(p)===s),accs=g('acc');
+  const aset=[[]];accs.forEach(a=>aset.push([a]));for(let i=0;i<accs.length;i++)for(let j=i+1;j<accs.length;j++)aset.push([accs[i],accs[j]]);
+  const bodies=[];g('top').forEach(t=>g('bottom').forEach(b=>bodies.push({top:t,bottom:b})));g('full').forEach(f=>bodies.push({full:f}));
+  let all=[];const outs=[null].concat(g('outer'));
+  bodies.forEach(bd=>outs.forEach(o=>g('shoes').forEach(s=>aset.forEach(a=>all.push({top:bd.top||null,bottom:bd.bottom||null,full:bd.full||null,outer:o,shoes:s,acc:a})))));
+  if(all.length>6000){all.sort(()=>Math.random()-.5);all=all.slice(0,6000)}
+  const list=all.map(L=>({key:lookKey(L),L,ev:evaluate(L)}));
+  _c={sig:sg,list};return list}
+function affinity(L){const P=S.prefs;let s=0;const ps=lpieces(L);ps.forEach(p=>{s+=(P.peca[p.id]||0)+(P.cor[p.corNome]||0)*.6+(P.estilo[p.estilo]||0)*.6});return ps.length?Math.tanh(s/(ps.length*1.5)):0}
+function learn(L,w){lpieces(L).forEach(p=>{const b=(o,k,v)=>{o[k]=(o[k]||0)+v};b(S.prefs.peca,p.id,w);b(S.prefs.cor,p.corNome,w*.6);b(S.prefs.estilo,p.estilo,w*.6)})}
+function buildDeck(){
+  const dis=new Set(S.disliked);let pool=ranked().filter(x=>x.ev.flag!=='vermelho'&&!dis.has(x.key));
+  const seen=new Set(S.seen);let fresh=pool.filter(x=>!seen.has(x.key));if(fresh.length<6){S.seen=[];fresh=pool}
+  fresh=fresh.map(x=>Object.assign({},x,{rank:x.ev.total+affinity(x.L)*14+Math.random()*7})).sort((a,b)=>b.rank-a.rank);
+  const out=[],cnt={};for(const x of fresh){const k=bodyKey(x.L);cnt[k]=(cnt[k]||0)+1;if(cnt[k]>2)continue;out.push(x);if(out.length>=24)break}
+  return out}
+function ensureDeck(force){const sg=sig();if(force||S.deckSig!==sg){S.deck=buildDeck();S.di=0;S.deckSig=sg}}
+function pickBest(){const l=ranked().filter(x=>x.ev.flag!=='vermelho');if(!l.length)return null;let b=null,bs=-1e9;l.forEach(x=>{const r=x.ev.total+affinity(x.L)*14;if(r>bs){bs=r;b=x}});return b}
+function variantsOf(e){return ranked().filter(x=>x.key!==e.key&&bodyKey(x.L)===bodyKey(e.L)&&x.ev.flag!=='vermelho').sort((a,b)=>b.ev.total-a.ev.total).slice(0,6)}
+function suggestions(sel){
+  const L=selToLook(sel),base=evaluate(L).total,out=[],C=closet();
+  ['top','bottom','outer','shoes'].forEach(slot=>{
+    if((slot==='top'||slot==='bottom')&&L.full)return;
+    const cur=L[slot];
+    C.filter(p=>slotOf(p)===slot&&(!cur||p.id!==cur.id)).forEach(p=>{const L2=Object.assign({},L,{acc:L.acc.slice()});L2[slot]=p;const e=evaluate(L2),d=e.total-base;if(d>=4)out.push({slot,from:cur,to:p,delta:d,flag:e.flag})});
+    if(slot==='outer'&&cur){const L2=Object.assign({},L,{outer:null,acc:L.acc.slice()});const e=evaluate(L2),d=e.total-base;if(d>=4)out.push({slot,from:cur,to:null,delta:d,flag:e.flag})}});
+  out.sort((a,b)=>b.delta-a.delta);const seen=new Set();
+  return out.filter(o=>!seen.has(o.slot)&&seen.add(o.slot)).slice(0,3)}
+function learned(){
+  const top=(o,n,pos)=>Object.entries(o).filter(x=>pos?x[1]>0:x[1]<0).sort((a,b)=>pos?b[1]-a[1]:a[1]-b[1]).slice(0,n).map(x=>x[0]);
+  const C=closet(),u=C.map(p=>[p,S.usage[p.id]||0]).sort((a,b)=>b[1]-a[1]),tot=u.reduce((a,x)=>a+x[1],0);
+  return{n:S.stats.likes+S.stats.nopes,cores:top(S.prefs.cor,3,true),estilos:top(S.prefs.estilo,2,true),evitar:top(S.prefs.cor,2,false),tot,mais:u.filter(x=>x[1]>0).slice(0,3).map(x=>x[0]),paradas:tot>=3?u.filter(x=>x[1]===0&&slotOf(x[0])!=='acc').slice(0,3).map(x=>x[0]):[]}}
+window.LM={S,$,$$,esc,clamp,rnd,CATS,CATL,FORM,LOCAIS,OCASIOES,OCUSO,ESTILOS,TECIDOS,CORTES,SUBS,COLORS,CMAP,SAMPLE,WX,weatherFor,save,closet,byId,setPath,slotOf,sym,emptySel,asLook,selToLook,selFromLook,lpieces,lookKey,bodyKey,valid,evaluate,ranked,affinity,learn,buildDeck,ensureDeck,pickBest,variantsOf,suggestions,learned,isoPlus,modules:[],register(m){this.modules.push(m)}};
+})();
+(function(){
+'use strict';
+const L_=window.LM,S=L_.S,esc=L_.esc,FORM=L_.FORM,CATS=L_.CATS,CATL=L_.CATL;
+const FLAG={verde:{label:'Look adequado',cls:'ok',v:'var(--ok)'},amarelo:{label:'Atenção',cls:'warn',v:'var(--warn)'},vermelho:{label:'Incompatibilidade',cls:'bad',v:'var(--bad)'}};
+const CRIT=[['harmonia','Harmonia visual','Cores e combinações'],['proporcao','Proporção','Modelagem e equilíbrio'],['estilo','Estilo','Coerência do conjunto'],['ocasiao','Ocasião','Adequação ao evento'],['ambiente','Ambiente','Compatibilidade com o local'],['clima','Clima','Conforto térmico e praticidade']];
+const IC={
+ inicio:'<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
+ closet:'<path d="M12 8V7a2 2 0 1 0-2-2"/><path d="M12 8l8 5.6a1.2 1.2 0 0 1-.7 2.2H4.7A1.2 1.2 0 0 1 4 13.6z"/><path d="M5 19h14"/>',
+ match:'<rect x="6.5" y="4" width="11" height="16" rx="2.5"/><path d="M3 8v8M21 8v8"/>',
+ destino:'<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+ favoritos:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>'};
+const ico=(k,sz)=>'<svg viewBox="0 0 24 24" aria-hidden="true"'+(sz?' style="width:'+sz+'px;height:'+sz+'px"':'')+'>'+IC[k]+'</svg>';
+
+function symSVG(p){return '<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#'+L_.sym(p)+'" width="100" height="100" style="color:'+p.cor+'"/></svg>'}
+function lookSVG(L){
+  const o=[],put=(p,x,y,w,h,flip)=>{if(!p)return;const t=flip?' transform="translate('+(x*2+w)+' 0) scale(-1 1)"':'';o.push('<use href="#'+L_.sym(p)+'" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" style="color:'+p.cor+'"'+t+'/>')};
+  put(L.outer,12,4,200,152);put(L.bottom,50,118,124,128);put(L.full,52,10,120,196);put(L.top,52,22,120,112);
+  put(L.shoes,36,246,70,48);put(L.shoes,118,246,70,48,true);
+  L.acc.slice(0,5).forEach((p,i)=>put(p,216,14+i*50,40,40));
+  return '<svg viewBox="0 0 260 300" role="img" aria-label="Composição do look">'+o.join('')+'</svg>'}
+function ring(score,flag,size){size=size||64;const r=size/2-5,c=2*Math.PI*r,off=c*(1-score/100),m=size/2;
+  return '<svg class="ring" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" role="img" aria-label="Nota '+score+' de 100"><circle cx="'+m+'" cy="'+m+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="5"/><circle cx="'+m+'" cy="'+m+'" r="'+r+'" fill="none" stroke="'+FLAG[flag].v+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'" transform="rotate(-90 '+m+' '+m+')"/><text x="'+m+'" y="'+m+'" style="font-size:'+(size>56?22:16)+'px">'+score+'</text></svg>'}
+const pill=f=>'<span class="pill '+FLAG[f].cls+'">'+FLAG[f].label+'</span>';
+function analysisHTML(ev){
+  const bars=CRIT.map(c=>{const v=ev.crit[c[0]],t=v>=75?'':v>=55?'warn':'bad';return '<div class="bar"><div class="bl"><span>'+c[1]+'</span><b>'+v+'</b></div><div class="track"><i class="'+t+'" style="width:'+v+'%"></i></div><small>'+c[2]+'</small></div>'}).join('');
+  return '<div class="col" style="gap:14px"><div class="row">'+ring(ev.total,ev.flag,72)+'<div class="col" style="gap:4px">'+pill(ev.flag)+(ev.capped?'<span class="small muted">Nota limitada pelo dress code.</span>':'<span class="small muted">Nota geral de 0 a 100</span>')+'</div></div><div class="bars">'+bars+'</div><ul class="reasons">'+ev.reasons.map(r=>'<li class="'+r.tone+'">'+esc(r.text)+'</li>').join('')+'</ul></div>'}
+function names(L){return L_.lpieces(L).map(p=>esc(p.nome)).join(' · ')}
+function greeting(){const h=new Date().getHours();return h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}
+function dateLine(){const c=S.ctx;let d='';try{const dt=new Date(c.data+'T12:00:00');d=dt.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}catch(e){}return d+(c.hora?', '+c.hora:'')}
+function wxLine(){const w=S.weather;if(!w)return 'Consultar previsão';return w.feel+'° de sensação, '+w.rain+'% de chuva'+(w.sample?' (exemplo)':'')}
+function learnedHTML(){
+  const a=L_.learned();
+  if(a.n<3&&!a.tot)return '<p class="muted small" style="margin:8px 0 0">Ainda tenho poucas escolhas suas. Deslize alguns looks em Match e eu começo a perceber o seu gosto.</p>';
+  const row=(k,v)=>v?'<dt>'+k+'</dt><dd>'+v+'</dd>':'';
+  return '<dl class="kv">'+row('Escolhas feitas',S.stats.likes+' matches, '+S.stats.nopes+' rejeitados')+row('Cores que você aprova',a.cores.join(', '))+row('Estilos preferidos',a.estilos.join(', '))+row('Cores que costuma recusar',a.evitar.join(', '))+row('Mais usadas',a.mais.map(p=>esc(p.nome)).join(', '))+row('Quase sem uso',a.paradas.map(p=>esc(p.nome)).join(', '))+'</dl>'}
+
+/* ===== Início ===== */
+function viewInicio(){
+  const C=L_.closet(),best=L_.pickBest(),c=S.ctx,nSample=C.filter(p=>p.sample).length;
+  const counts=CATS.map(k=>[k[1],C.filter(p=>p.cat===k[0]).length]).filter(x=>x[1]>0);
+  const mods=[['Cadastro do closet','ok','Ativo'],['Match e aprendizado','ok','Ativo'],['Avaliação contextual e nota','ok','Ativo'],['Provador com composição','ok','Ativo'],['Reconhecimento de peças por IA visual','mute','Aguarda integração'],['Previsão do tempo automática','mute','Aguarda integração'],['Provador com a sua foto','mute','Aguarda integração']];
+  return '<div class="flow">'+
+  '<header><p class="eyebrow">'+greeting()+'</p><h1 class="display">Não basta combinar. <em>Tem que fazer sentido.</em></h1></header>'+
+  '<article class="card hero"><div class="row between"><p class="eyebrow">Meu próximo evento</p><button class="link" data-act="go" data-tab="destino">Editar</button></div>'+
+  '<dl class="kv"><dt>Local</dt><dd>'+esc(c.local)+'</dd><dt>Ocasião</dt><dd>'+esc(c.ocasiao)+'</dd><dt>Formalidade</dt><dd>'+FORM[c.form]+(c.obrig?' (obrigatória)':'')+'</dd><dt>Clima</dt><dd>'+wxLine()+'</dd></dl>'+
+  '<p class="small muted" style="margin:12px 0 0">'+esc(dateLine())+'</p></article>'+
+  (best?'<article class="card"><p class="eyebrow">Melhor combinação para o evento</p><div class="row" style="margin-top:12px;align-items:flex-start"><div class="compwrap" style="width:42%;flex:none">'+lookSVG(best.L)+'</div><div class="col"><div class="row">'+ring(best.ev.total,best.ev.flag,60)+pill(best.ev.flag)+'</div><p class="small muted" style="margin:0">'+names(best.L)+'</p><p class="small" style="margin:0">'+esc((best.ev.reasons.find(r=>r.area==="ocasiao")||best.ev.reasons[0]).text)+'</p></div></div><div class="row" style="margin-top:14px"><button class="btn primary" style="flex:1" data-act="openBest">Abrir no provador</button><button class="btn" style="flex:1" data-act="go" data-tab="match" data-mode="descobrir">Ver mais looks</button></div></article>':'')+
+  '<article class="card"><div class="row between"><p class="eyebrow">Resumo do guarda-roupa</p><button class="link" data-act="go" data-tab="closet">Abrir</button></div><div class="grid2" style="margin-top:12px;gap:8px 16px">'+counts.map(x=>'<div class="row between small"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')+'</div>'+(nSample?'<p class="note" style="margin-top:12px">'+nSample+' peças aqui são de exemplo, para você testar o app. Cadastre as suas em Meu Closet.</p>':'')+'</article>'+
+  '<article class="card"><p class="eyebrow">O que aprendi com você</p>'+learnedHTML()+'</article>'+
+  '<article class="card"><p class="eyebrow">Estado do protótipo</p><div class="col" style="margin-top:12px;gap:10px">'+mods.map(m=>'<div class="row between"><span class="small">'+m[0]+'</span><span class="pill '+(m[1]==='ok'?'ok':'mute')+'">'+m[2]+'</span></div>').join('')+'</div></article>'+
+  '</div>'}
+
+/* ===== Meu Closet ===== */
+function viewCloset(){
+  const C=L_.closet(),f=S.filtro,list=f==='todas'?C:C.filter(p=>p.cat===f),us=L_.learned();
+  const tile=p=>'<button class="tile" data-act="piece" data-id="'+p.id+'"><div class="art">'+(p.foto?'<img src="'+p.foto+'" alt="'+esc(p.nome)+'">':symSVG(p))+'</div><div><span class="name">'+esc(p.nome)+'</span><span class="sub"><i class="dot" style="background:'+p.cor+'"></i>'+esc(p.corNome)+' · '+FORM[p.formal]+'</span></div></button>';
+  return '<div class="flow"><header class="row between"><div><p class="eyebrow">'+C.length+' peças</p><h1 class="display">Meu Closet</h1></div><button class="btn primary" data-act="addpiece">Adicionar</button></header>'+
+  '<div class="chips scroll" role="group" aria-label="Filtrar por categoria"><button class="chip" aria-pressed="'+(f==='todas')+'" data-act="filtro" data-v="todas">Todas</button>'+CATS.map(k=>'<button class="chip" aria-pressed="'+(f===k[0])+'" data-act="filtro" data-v="'+k[0]+'">'+k[1]+'</button>').join('')+'</div>'+
+  (C.some(p=>p.sample)?'<p class="note">Peças de exemplo em uso. <button class="link" data-act="clearSamples" style="padding:0">Remover exemplos</button></p>':'')+
+  (list.length?'<div class="grid2">'+list.map(tile).join('')+'</div>':'<div class="card" style="text-align:center"><p class="h2">Nada por aqui ainda</p><p class="muted small">Toque em Adicionar para cadastrar a primeira peça desta categoria.</p></div>')+
+  (us.paradas.length?'<p class="note">Peças paradas: '+us.paradas.map(p=>esc(p.nome)).join(', ')+'.</p>':'')+'</div>'}
+function pieceSheet(p){
+  const used=S.usage[p.id]||0,row=(k,v)=>'<dt>'+k+'</dt><dd>'+v+'</dd>',sub=p.sub&&L_.SUBS[p.cat]?(L_.SUBS[p.cat].find(x=>x[0]===p.sub)||[])[1]:'';
+  return '<div class="compwrap" style="padding:14px">'+(p.foto?'<img class="photoprev" src="'+p.foto+'" alt="'+esc(p.nome)+'" style="max-width:220px">':'<div style="width:150px">'+symSVG(p)+'</div>')+'</div><p class="h2" style="font-size:26px">'+esc(p.nome)+'</p>'+
+  '<dl class="kv">'+row('Categoria',CATL[p.cat]+(sub?' ('+sub+')':''))+row('Cor','<i class="dot" style="background:'+p.cor+'"></i> '+esc(p.corNome))+row('Tecido',esc(p.tecido||'Não identificado'))+row('Modelagem',esc(p.corte))+row('Estilo',esc(p.estilo))+row('Formalidade',FORM[p.formal])+row('Ocasiões',esc((p.oc||[]).join(', ')||'Não informadas'))+row('Usos registrados',used)+'</dl>'+
+  '<div class="row"><button class="btn primary" style="flex:1" data-act="usepiece" data-id="'+p.id+'">Registrar uso hoje</button>'+(S.confirmDel===p.id?'<button class="btn danger" data-act="delpiece" data-id="'+p.id+'">Confirmar</button>':'<button class="btn danger" data-act="delpiece" data-id="'+p.id+'">Remover</button>')+'</div>'}
+function addSheet(){
+  const d=S.draft,opts=(arr,cur)=>arr.map(x=>'<option'+(x===cur?' selected':'')+'>'+x+'</option>').join(''),subs=L_.SUBS[d.cat];
+  return '<div class="col" style="gap:14px"><label class="field"><span>Foto da peça</span><input type="file" id="photoInput" accept="image/*"></label>'+
+  (d.foto?'<img class="photoprev" src="'+d.foto+'" alt="Pré-visualização da peça" style="max-width:180px">':'')+
+  '<p class="note">Por enquanto o app lê só a cor dominante da foto e sugere a categoria pelo nome do arquivo. O reconhecimento completo de tecido e modelagem por IA visual ainda precisa ser integrado, então confirme os campos abaixo.</p>'+
+  '<label class="field"><span>Nome da peça</span><input type="text" data-bind="draft.nome" value="'+esc(d.nome)+'" placeholder="Ex.: Camisa de linho azul"></label>'+
+  '<div class="grid2"><label class="field"><span>Categoria</span><select data-bind="draft.cat" data-rerender="add">'+CATS.map(k=>'<option value="'+k[0]+'"'+(k[0]===d.cat?' selected':'')+'>'+k[1]+'</option>').join('')+'</select></label>'+
+  (subs?'<label class="field"><span>Tipo</span><select data-bind="draft.sub">'+subs.map(x=>'<option value="'+x[0]+'"'+(x[0]===d.sub?' selected':'')+'>'+x[1]+'</option>').join('')+'</select></label>':'<label class="field"><span>Tecido</span><select data-bind="draft.tecido">'+opts(L_.TECIDOS,d.tecido)+'</select></label>')+'</div>'+
+  '<div class="grid2"><label class="field"><span>Cor predominante</span><select data-bind="draft.corNome">'+L_.COLORS.map(c=>'<option'+(c[0]===d.corNome?' selected':'')+'>'+c[0]+'</option>').join('')+'</select></label><label class="field"><span>Modelagem</span><select data-bind="draft.corte">'+opts(L_.CORTES,d.corte)+'</select></label></div>'+
+  '<div class="grid2"><label class="field"><span>Estilo</span><select data-bind="draft.estilo">'+opts(L_.ESTILOS,d.estilo)+'</select></label><label class="field"><span>Formalidade</span><select data-bind="draft.formal" data-int="1">'+FORM.map((f,i)=>'<option value="'+i+'"'+(i===d.formal?' selected':'')+'>'+f+'</option>').join('')+'</select></label></div>'+
+  (subs?'<label class="field"><span>Tecido</span><select data-bind="draft.tecido">'+opts(L_.TECIDOS,d.tecido)+'</select></label>':'')+
+  '<div class="field"><span>Ocasiões de uso</span><div class="chips">'+L_.OCUSO.map(o=>'<button class="chip" aria-pressed="'+d.oc.includes(o)+'" data-act="draftOc" data-v="'+o+'">'+o+'</button>').join('')+'</div></div>'+
+  '<button class="btn primary block" data-act="savepiece">Salvar no closet</button></div>'}
+
+/* ===== Destino ===== */
+function adaptacoes(w){const a=[];if(!w)return a;
+  if(w.feel>=29)a.push('Calor forte. Prefira tecidos leves, como algodão e linho, e cores claras.');
+  else if(w.feel>=24)a.push('Dia quente. Evite camadas desnecessárias e priorize tecidos que respiram.');
+  else if(w.feel<14)a.push('Frio. Use sobreposições, como blazer ou casaco por cima da peça base.');
+  else if(w.feel<18)a.push('Temperatura amena para fria. Uma camada extra por cima ajuda.');
+  if(w.max-w.min>=10)a.push('A amplitude do dia é grande. Leve uma camada extra para o fim da noite.');
+  if(w.rain>=50)a.push('Chance alta de chuva. Prefira calçado fechado que aguente água e leve guarda-chuva ou casaco impermeável.');
+  if(!a.length)a.push('Clima estável. Nenhuma adaptação especial necessária.');return a}
+function adaptHTML(){return '<ul class="reasons">'+adaptacoes(S.weather).map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>'}
+function viewDestino(){
+  const c=S.ctx,w=S.weather,chip=(path,val,cur)=>'<button class="chip" aria-pressed="'+(cur===val)+'" data-act="set" data-path="'+path+'" data-val="'+esc(val)+'">'+esc(val)+'</button>';
+  return '<div class="flow"><header><p class="eyebrow">Para onde você vai</p><h1 class="display">Destino</h1></header>'+
+  '<article class="card col" style="gap:14px"><div class="field"><span>Local</span><div class="chips">'+L_.LOCAIS.map(x=>chip('ctx.local',x,c.local)).join('')+'</div></div>'+
+  '<div class="field"><span>Ocasião</span><div class="chips">'+L_.OCASIOES.map(x=>chip('ctx.ocasiao',x,c.ocasiao)).join('')+'</div></div>'+
+  '<div class="field"><span>Formalidade (dress code)</span><div class="seg" role="tablist">'+FORM.map((f,i)=>'<button role="tab" aria-selected="'+(c.form===i)+'" data-act="setForm" data-v="'+i+'">'+f+'</button>').join('')+'</div></div>'+
+  '<button class="switch" role="switch" aria-checked="'+c.obrig+'" data-act="toggleObrig"><span>Dress code obrigatório no convite<br><small class="muted" style="font-weight:500">Ligado, qualquer peça abaixo do nível pedido vira incompatibilidade.</small></span><i></i></button>'+
+  '<div class="grid2"><label class="field"><span>Data</span><input type="date" data-bind="ctx.data" value="'+esc(c.data)+'"></label><label class="field"><span>Horário</span><input type="time" data-bind="ctx.hora" value="'+esc(c.hora)+'"></label></div>'+
+  '<label class="field"><span>Detalhes do evento</span><input type="text" data-bind="ctx.detalhes" value="'+esc(c.detalhes)+'" placeholder="Aniversário, jantar, inauguração"></label></article>'+
+  '<article class="card col" style="gap:12px"><div class="row between"><p class="eyebrow">Clima</p>'+(w&&w.sample?'<span class="pill mute">Valores de exemplo</span>':w&&w.manual?'<span class="pill acc">Ajustado por você</span>':'')+'</div>'+
+  '<label class="field"><span>Cidade do evento</span><input type="text" list="cidades" data-bind="ctx.cidade" value="'+esc(c.cidade)+'" placeholder="Cidade"></label><datalist id="cidades">'+Object.keys(L_.WX).map(x=>'<option value="'+x+'">').join('')+'</datalist>'+
+  '<button class="btn block" data-act="consult">Consultar previsão</button>'+
+  (w&&w.city&&w.city.toLowerCase()!==String(c.cidade).trim().toLowerCase()?'<p class="small" style="color:var(--warn);margin:0">A previsão abaixo é de '+esc(w.city)+'. Consulte de novo para '+esc(c.cidade||'a nova cidade')+'.</p>':'')+
+  '<div class="grid4"><label class="field"><span>Mín °C</span><input type="number" inputmode="numeric" data-bind="weather.min" value="'+(w?w.min:'')+'"></label><label class="field"><span>Máx °C</span><input type="number" inputmode="numeric" data-bind="weather.max" value="'+(w?w.max:'')+'"></label><label class="field"><span>Sensação</span><input type="number" inputmode="numeric" data-bind="weather.feel" value="'+(w?w.feel:'')+'"></label><label class="field"><span>Chuva %</span><input type="number" inputmode="numeric" data-bind="weather.rain" value="'+(w?w.rain:'')+'"></label></div>'+
+  (w?'<p class="small muted" style="margin:0">'+esc(w.desc||'')+'</p>':'')+
+  '<div id="adapt">'+adaptHTML()+'</div><p class="note">A conexão com um serviço meteorológico real ainda não está integrada. Os valores são de exemplo e você pode corrigir cada campo. Quando a integração existir, a previsão será consultada de novo perto do evento.</p></article>'+
+  '<article class="card"><p class="eyebrow">Como o app avalia</p><div class="legend" style="margin-top:12px"><div>'+pill('verde')+'<span>Compatível com a ocasião e o ambiente.</span></div><div>'+pill('amarelo')+'<span>Pode funcionar, com pontos a ajustar.</span></div><div>'+pill('vermelho')+'<span>Choca com o dress code ou com uma exigência do evento.</span></div></div><p class="small muted" style="margin:12px 0 0">O local sozinho não define a roupa. Um shopping recebe do passeio ao evento formal, então pesam mais a ocasião e o dress code. O semáforo olha só ocasião, ambiente e clima. Harmonia, proporção e estilo entram na nota, mas não reprovam um look por gosto.</p></article>'+
+  '<button class="btn primary block" data-act="go" data-tab="match" data-mode="descobrir">Ver looks para este destino</button></div>'}
+Object.assign(L_,{FLAG,CRIT,ico,symSVG,lookSVG,ring,pill,analysisHTML,names,viewInicio,viewCloset,pieceSheet,addSheet,viewDestino,adaptHTML});
+})();
+(function(){
+'use strict';
+const L_=window.LM,S=L_.S,esc=L_.esc,$=L_.$,$$=L_.$$,FORM=L_.FORM,FLAG=L_.FLAG;
+const {lookSVG,ring,pill,analysisHTML,names,ico,symSVG}=L_;
+
+/* ===== Match ===== */
+function ribbon(){const c=S.ctx,w=S.weather;return '<div class="row between wrap" style="gap:6px"><span class="small muted">'+esc(c.local)+' · '+esc(c.ocasiao)+' · '+FORM[c.form]+(w?' · '+w.feel+'°':'')+'</span><button class="link" data-act="go" data-tab="destino">Alterar</button></div>'}
+function viewMatch(){
+  const m=S.mode,tab=(id,l)=>'<button role="tab" aria-selected="'+(m===id)+'" data-act="mode" data-v="'+id+'">'+l+'</button>';
+  return '<div class="flow"><header><p class="eyebrow">Combinações do seu closet</p><h1 class="display">Match</h1></header><div class="seg" role="tablist">'+tab('descobrir','Descobrir')+tab('provador','Provador')+tab('avaliar','Avaliar')+'</div>'+ribbon()+'<div id="matchBody">'+matchBody()+'</div></div>'}
+function matchBody(){return S.mode==='descobrir'?deckHTML():S.mode==='provador'?provHTML():avalHTML()}
+const X='<path d="M6 6l12 12M18 6L6 18"/>',HEART='<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',BOOK='<path d="M7 4h10v16l-5-4-5 4z"/>',SHUF='<path d="M4 7h4l8 10h4M4 17h4l2-2.5M14 9.5L16 7h4M18 5l2 2-2 2M18 15l2 2-2 2"/>',REF='<path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6"/>';
+const rb=(cls,act,label,p)=>'<button class="round '+cls+'" data-act="'+act+'" aria-label="'+label+'"><svg viewBox="0 0 24 24">'+p+'</svg></button>';
+function deckHTML(){
+  L_.ensureDeck(false);const e=S.deck[S.di],nx=S.deck[S.di+1];
+  if(!e)return '<div class="card" style="text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center"><p class="h2">Acabaram as combinações</p><p class="muted small" style="margin:0">Você viu os melhores looks para este destino. Peça novas combinações com as mesmas peças.</p><button class="btn primary" data-act="novas">Novas combinações</button></div>';
+  const head=(e.ev.reasons.find(r=>r.tone==='bad')||e.ev.reasons.find(r=>r.tone==='warn')||e.ev.reasons.find(r=>r.area==='ocasiao')||e.ev.reasons[0]);
+  return '<div class="deck">'+(nx?'<div class="swipe-card back"></div>':'')+
+  '<div class="swipe-card" id="topcard"><div class="stamp like">MATCH</div><div class="stamp nope">PASSO</div><div class="row between">'+pill(e.ev.flag)+'<span class="small muted">'+(S.di+1)+' de '+S.deck.length+'</span></div><div class="art">'+lookSVG(e.L)+'</div><div class="row">'+ring(e.ev.total,e.ev.flag,60)+'<div class="col" style="gap:3px"><span class="small muted">'+names(e.L)+'</span><span class="small">'+esc(head.text)+'</span></div></div><button class="link" data-act="analise" style="text-align:left">Ver análise completa</button></div></div>'+
+  '<div class="actions">'+rb('no','nope','Não gostei',X)+rb('','variar','Ver outras possibilidades',SHUF)+rb('yes big','like','Dar match',HEART)+rb('','bookmark','Salvar nos favoritos',BOOK)+rb('','novas','Novas combinações',REF)+'</div>'}
+
+/* seleção compartilhada (provador e avaliar) */
+function pickerHTML(mode){
+  const sel=S[mode].sel,C=L_.closet(),rows=[['top','Parte de cima'],['bottom','Parte de baixo'],['full','Vestido'],['outer','Casaco'],['shoes','Calçado'],['acc','Acessórios']];
+  return rows.map(r=>{const its=C.filter(p=>L_.slotOf(p)===r[0]);if(!its.length)return '';
+    return '<div class="prow"><p class="eyebrow">'+r[1]+'</p><div class="hscroll">'+its.map(p=>{const on=r[0]==='acc'?sel.acc.includes(p.id):sel[r[0]]===p.id;return '<button class="ptile" aria-pressed="'+on+'" data-act="pick" data-mode="'+mode+'" data-slot="'+r[0]+'" data-id="'+p.id+'">'+symSVG(p)+'<span>'+esc(p.nome)+'</span></button>'}).join('')+'</div></div>'}).join('')}
+function initProv(){if(!S.prov){const b=L_.pickBest();S.prov={sel:b?L_.selFromLook(b.L):L_.emptySel(),pin:null}}}
+function provHTML(){
+  initProv();const L=L_.selToLook(S.prov.sel),ok=L_.valid(L),ev=ok?L_.evaluate(L):null,pin=S.prov.pin;
+  let cmp='';
+  if(pin&&ok){const a=pin.ev,d=ev.total-a.total;cmp='<article class="card col"><p class="eyebrow">Comparação</p><div class="grid2"><div class="col" style="align-items:center"><span class="small muted">Look fixado</span><div class="compwrap">'+lookSVG(pin.L)+'</div>'+ring(a.total,a.flag,56)+pill(a.flag)+'</div><div class="col" style="align-items:center"><span class="small muted">Look atual</span><div class="compwrap">'+lookSVG(L)+'</div>'+ring(ev.total,ev.flag,56)+pill(ev.flag)+'</div></div><p class="small" style="margin:0;text-align:center">'+(d===0?'Mesma nota nos dois looks.':'O look atual tem '+Math.abs(d)+' pontos '+(d>0?'a mais':'a menos')+'.')+'</p></article>'}
+  return '<div class="col" style="gap:14px"><div class="card col"><div class="compwrap">'+lookSVG(L)+'</div>'+(ok?'<div class="row">'+ring(ev.total,ev.flag,60)+'<div class="col" style="gap:4px">'+pill(ev.flag)+'<span class="small muted">'+esc(ev.reasons[0].text)+'</span></div></div><button class="link" data-act="analiseProv" style="text-align:left">Ver análise completa</button>':'<p class="note">Escolha parte de cima e de baixo (ou um vestido) e um calçado para ver a nota.</p>')+'</div>'+
+  '<div class="row"><button class="btn primary" style="flex:1" data-act="saveProv"'+(ok?'':' disabled')+'>Salvar look</button><button class="btn" style="flex:1" data-act="pinProv"'+(ok?'':' disabled')+'>'+(pin?'Fixar este':'Fixar para comparar')+'</button></div>'+cmp+pickerHTML('prov')+
+  '<p class="note">O provador monta a composição com a silhueta e a cor de cada peça. Ver o look no seu corpo, a partir de uma foto sua, depende de uma integração com geração de imagem que ainda não existe aqui.</p></div>'}
+function avalHTML(){
+  if(!S.av)S.av={sel:L_.emptySel(),photo:null};
+  const L=L_.selToLook(S.av.sel),ok=L_.valid(L),ev=ok?L_.evaluate(L):null;let sg='';
+  if(ok){const ss=L_.suggestions(S.av.sel);sg='<article class="card col"><p class="eyebrow">Sugestões de melhoria</p>'+(ss.length?'<ul class="reasons">'+ss.map(s=>'<li>'+(s.to?(s.from?'Trocar '+esc(s.from.nome)+' por '+esc(s.to.nome):'Incluir '+esc(s.to.nome)):'Tirar '+esc(s.from.nome))+' <b style="color:var(--ok)">+'+s.delta+' pontos</b>'+(s.flag==='verde'?' e o semáforo fica verde':'')+'</li>').join('')+'</ul>':'<p class="small muted" style="margin:0">Nenhuma troca com as peças do seu closet melhora a nota de forma relevante.</p>')+'</article>'}
+  return '<div class="col" style="gap:14px"><article class="card col"><p class="eyebrow">Look que você está vestindo</p><label class="field"><span>Foto do look</span><input type="file" id="evalPhoto" accept="image/*"></label>'+(S.av.photo?'<img class="photoprev" src="'+S.av.photo+'" alt="Foto do look enviada">':'')+'<p class="note">A leitura automática da foto por IA visual ainda precisa ser integrada. Por enquanto, marque abaixo as peças do seu closet que aparecem na foto e a avaliação é feita com elas.</p></article>'+pickerHTML('av')+
+  (ok?'<article class="card">'+analysisHTML(ev)+'</article>'+sg:'<p class="note">Marque parte de cima, parte de baixo (ou vestido) e calçado para receber a avaliação.</p>')+'</div>'}
+function renderBody(){const el=$('#matchBody');if(!el)return;const sc=$$('.hscroll',el).map(e=>e.scrollLeft);el.innerHTML=matchBody();$$('.hscroll',el).forEach((e,i)=>{e.scrollLeft=sc[i]||0});bindSwipe()}
+
+/* ===== favoritos ===== */
+function addFav(L,ev,flags){
+  const key=L_.lookKey(L);let f=S.favs.find(x=>x.key===key);
+  if(!f){f={key,ids:L_.lpieces(L).map(p=>p.id),score:ev.total,flag:ev.flag,ctx:{local:S.ctx.local,ocasiao:S.ctx.ocasiao,form:S.ctx.form},at:Date.now(),matched:false,saved:false,uso:0};S.favs.unshift(f)}
+  Object.assign(f,flags);L_.save();return f}
+function viewFavoritos(){
+  const fl=S.favFiltro,list=S.favs.filter(f=>fl==='todos'||(fl==='matches'&&f.matched)||(fl==='salvos'&&f.saved)),tab=(v,l)=>'<button class="chip" aria-pressed="'+(fl===v)+'" data-act="favFiltro" data-v="'+v+'">'+l+'</button>';
+  const item=f=>{const L=L_.asLook(f.ids),on=S.cmp.includes(f.key);return '<article class="card col"><div class="favitem"><div class="th">'+lookSVG(L)+'</div><div class="col" style="gap:6px"><div class="row">'+ring(f.score,f.flag,48)+pill(f.flag)+'</div><span class="small muted">'+esc(f.ctx.local)+' · '+esc(f.ctx.ocasiao)+' · '+FORM[f.ctx.form]+'</span><span class="small">'+names(L)+'</span></div></div><div class="row wrap" style="gap:8px"><button class="btn" data-act="favOpen" data-key="'+f.key+'">Provador</button><button class="btn" data-act="favUse" data-key="'+f.key+'">Usei ('+f.uso+')</button><button class="chip" aria-pressed="'+on+'" data-act="favCmp" data-key="'+f.key+'">Comparar</button><button class="link" data-act="favDel" data-key="'+f.key+'" style="margin-left:auto">Remover</button></div></article>'};
+  return '<div class="flow"><header><p class="eyebrow">Histórico de combinações aprovadas</p><h1 class="display">Favoritos</h1></header><div class="chips">'+tab('todos','Todos')+tab('matches','Matches')+tab('salvos','Salvos')+'</div>'+
+  (S.cmp.length===2?'<button class="btn primary block" data-act="favCompare">Comparar os 2 selecionados</button>':S.cmp.length===1?'<p class="note">Escolha mais um look para comparar.</p>':'')+
+  (list.length?list.map(item).join(''):'<div class="card" style="text-align:center"><p class="h2">Nenhum look aqui ainda</p><p class="muted small">Dê match ou salve combinações em Match e elas aparecem nesta lista.</p><button class="btn primary" data-act="go" data-tab="match" data-mode="descobrir">Ir para Match</button></div>')+'</div>'}
+function compareSheet(a,b){const x=L_.asLook(a.ids),y=L_.asLook(b.ids),col=(f,L)=>'<div class="col" style="align-items:center;text-align:center"><div class="compwrap">'+lookSVG(L)+'</div>'+ring(f.score,f.flag,56)+pill(f.flag)+'<span class="small muted">'+names(L)+'</span></div>';return '<div class="grid2">'+col(a,x)+col(b,y)+'</div>'}
+
+/* ===== módulos, abas, folhas, toast ===== */
+L_.register({id:'inicio',label:'Início',icon:'inicio',render:L_.viewInicio});
+L_.register({id:'closet',label:'Closet',icon:'closet',render:L_.viewCloset});
+L_.register({id:'match',label:'Match',icon:'match',render:viewMatch,after:bindSwipe});
+L_.register({id:'destino',label:'Destino',icon:'destino',render:L_.viewDestino});
+L_.register({id:'favoritos',label:'Favoritos',icon:'favoritos',render:viewFavoritos});
+function render(){const m=L_.modules.find(x=>x.id===S.tab);$('#screen').innerHTML=m.render();if(m.after)m.after();$$('#tabbar button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===S.tab?'page':'false'))}
+function buildTabs(){$('#tabbar').innerHTML=L_.modules.map(m=>'<button data-act="go" data-tab="'+m.id+'" aria-label="'+m.label+'">'+ico(m.icon)+'<span>'+m.label+'</span></button>').join('')}
+function openSheet(t,h){$('#sheetTitle').textContent=t;$('#sheetBody').innerHTML=h;$('#overlay').hidden=false;$('.sheet').scrollTop=0}
+function closeSheet(){$('#overlay').hidden=true;S.confirmDel=null}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
+function refreshSheetAdd(){$('#sheetBody').innerHTML=L_.addSheet()}
+
+/* ===== swipe ===== */
+function bindSwipe(){
+  const c=$('#topcard');if(!c)return;let sx=0,sy=0,dx=0,drag=false;
+  c.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag=true;sx=e.clientX;sy=e.clientY;try{c.setPointerCapture(e.pointerId)}catch(_){}c.style.transition='none'});
+  c.addEventListener('pointermove',e=>{if(!drag)return;dx=e.clientX-sx;const dy=(e.clientY-sy)*.15;c.style.transform='translate('+dx+'px,'+dy+'px) rotate('+dx/16+'deg)';const k=Math.min(1,Math.abs(dx)/90);c.querySelector('.stamp.like').style.opacity=dx>0?k:0;c.querySelector('.stamp.nope').style.opacity=dx<0?k:0});
+  const end=()=>{if(!drag)return;drag=false;c.style.transition='';if(Math.abs(dx)>100)fling(dx>0?'like':'nope');else{c.style.transform='';c.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0)}dx=0};
+  c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end)}
+function fling(dir){const c=$('#topcard');if(!c){decide(dir);return}c.style.transition='transform .3s ease,opacity .3s';c.style.transform='translateX('+(dir==='like'?'':'-')+'520px) rotate('+(dir==='like'?'':'-')+'18deg)';c.style.opacity='0';setTimeout(()=>decide(dir),240)}
+function decide(dir){
+  const e=S.deck[S.di];if(!e)return;
+  if(dir==='like'){L_.learn(e.L,1);S.stats.likes++;addFav(e.L,e.ev,{matched:true});toast('Match! O look foi para Favoritos.')}
+  else{L_.learn(e.L,-1);S.stats.nopes++;S.disliked.push(e.key)}
+  S.seen.push(e.key);S.di++;L_.save();renderBody()}
+
+/* ===== ações ===== */
+const A={
+ go(t){S.tab=t.dataset.tab;if(t.dataset.mode)S.mode=t.dataset.mode;closeSheet();render();$('#screen').scrollTop=0},
+ close:closeSheet,
+ set(t){L_.setPath(t.dataset.path,t.dataset.val);L_.save();render()},
+ setForm(t){S.ctx.form=+t.dataset.v;L_.save();render()},
+ toggleObrig(){S.ctx.obrig=!S.ctx.obrig;L_.save();render()},
+ consult(){S.weather=L_.weatherFor(S.ctx.cidade);L_.save();render();toast('Previsão de exemplo carregada. Ajuste os valores se quiser.')},
+ filtro(t){S.filtro=t.dataset.v;render()},
+ piece(t){const p=L_.byId(t.dataset.id);if(p)openSheet('Detalhes da peça',L_.pieceSheet(p))},
+ addpiece(){S.draft={nome:'',cat:'camiseta',sub:'',foto:null,corNome:'Preto',tecido:'Algodão',corte:'Reto',estilo:'Casual',formal:0,oc:[]};openSheet('Nova peça',L_.addSheet())},
+ draftOc(t){const o=S.draft.oc,v=t.dataset.v,i=o.indexOf(v);i>=0?o.splice(i,1):o.push(v);refreshSheetAdd()},
+ savepiece(){
+  const d=S.draft;if(!d.nome.trim()){toast('Dê um nome para a peça.');return}
+  const sub=L_.SUBS[d.cat]?(d.sub||L_.SUBS[d.cat][0][0]):undefined,cm=L_.CMAP[d.corNome];
+  const calor=({camiseta:1,social:1,calca:1,bermuda:0,tenis:0,sapato:0,acessorio:0})[d.cat];
+  const p={id:'u'+Date.now(),nome:d.nome.trim(),cat:d.cat,sub,corNome:d.corNome,cor:cm.hex,neutro:!!cm.n,tecido:d.tecido,corte:d.corte,estilo:d.estilo,formal:d.formal,calor:d.cat==='vestido'?(sub==='saia'?0:1):d.cat==='jaqueta'?(sub==='casaco'?2:1):calor,imperm:sub==='cortavento',oc:d.oc.slice(),foto:d.foto};
+  if(d.cat==='tenis'||d.cat==='sapato')p.chuva=['Sintético'].includes(d.tecido)?2:d.tecido==='Couro'?1:0;
+  S.added.push(p);L_.save();closeSheet();render();toast('Peça adicionada ao closet.')},
+ usepiece(t){const id=t.dataset.id;S.usage[id]=(S.usage[id]||0)+1;L_.save();openSheet('Detalhes da peça',L_.pieceSheet(L_.byId(id)));toast('Uso registrado.')},
+ delpiece(t){const id=t.dataset.id;if(S.confirmDel!==id){S.confirmDel=id;openSheet('Detalhes da peça',L_.pieceSheet(L_.byId(id)));return}
+  if(id.charAt(0)==='u')S.added=S.added.filter(p=>p.id!==id);else S.hidden.push(id);S.confirmDel=null;L_.save();closeSheet();render();toast('Peça removida.')},
+ clearSamples(){L_.SAMPLE.forEach(p=>{if(!S.hidden.includes(p.id))S.hidden.push(p.id)});L_.save();render();toast('Exemplos removidos.')},
+ openBest(){const b=L_.pickBest();if(!b)return;S.prov={sel:L_.selFromLook(b.L),pin:null};S.tab='match';S.mode='provador';render()},
+ mode(t){S.mode=t.dataset.v;render()},
+ nope(){fling('nope')},like(){fling('like')},
+ bookmark(){const e=S.deck[S.di];if(!e)return;addFav(e.L,e.ev,{saved:true});L_.learn(e.L,1.5);L_.save();toast('Look salvo nos favoritos.')},
+ novas(){L_.ensureDeck(true);renderBody()},
+ analise(){const e=S.deck[S.di];if(e)openSheet('Análise do look',analysisHTML(e.ev))},
+ variar(){const e=S.deck[S.di];if(!e)return;const v=L_.variantsOf(e);S._v=v;
+  openSheet('Outras possibilidades',v.length?'<p class="muted small" style="margin:0">Mesma base de peças, com casaco, calçado e acessórios diferentes.</p><div class="grid2">'+v.map((x,i)=>'<button class="tile" data-act="applyVariant" data-i="'+i+'"><div class="art">'+lookSVG(x.L)+'</div><div class="row between">'+ring(x.ev.total,x.ev.flag,44)+pill(x.ev.flag)+'</div></button>').join('')+'</div>':'<p class="muted">Não há variações com estas peças que respeitem o destino.</p>')},
+ applyVariant(t){const x=S._v&&S._v[+t.dataset.i];if(!x)return;S.deck[S.di]=x;closeSheet();renderBody()},
+ pick(t){const m=t.dataset.mode,slot=t.dataset.slot,id=t.dataset.id,sel=S[m].sel;
+  if(slot==='acc'){const i=sel.acc.indexOf(id);i>=0?sel.acc.splice(i,1):sel.acc.push(id)}
+  else if(sel[slot]===id)sel[slot]=null;
+  else{sel[slot]=id;if(slot==='full'){sel.top=null;sel.bottom=null}if((slot==='top'||slot==='bottom')&&sel.full)sel.full=null}
+  renderBody()},
+ analiseProv(){const L=L_.selToLook(S.prov.sel);if(L_.valid(L))openSheet('Análise do look',analysisHTML(L_.evaluate(L)))},
+ saveProv(){const L=L_.selToLook(S.prov.sel);if(!L_.valid(L))return;addFav(L,L_.evaluate(L),{saved:true});toast('Look salvo nos favoritos.')},
+ pinProv(){const L=L_.selToLook(S.prov.sel);if(!L_.valid(L))return;S.prov.pin={L,ev:L_.evaluate(L)};renderBody();toast('Look fixado. Troque as peças para comparar.')},
+ favFiltro(t){S.favFiltro=t.dataset.v;render()},
+ favOpen(t){const f=S.favs.find(x=>x.key===t.dataset.key);if(!f)return;S.prov={sel:L_.selFromLook(L_.asLook(f.ids)),pin:null};S.tab='match';S.mode='provador';render()},
+ favUse(t){const f=S.favs.find(x=>x.key===t.dataset.key);if(!f)return;f.uso++;f.ids.forEach(id=>{S.usage[id]=(S.usage[id]||0)+1});L_.save();render();toast('Uso registrado nas peças do look.')},
+ favDel(t){S.favs=S.favs.filter(x=>x.key!==t.dataset.key);S.cmp=S.cmp.filter(k=>k!==t.dataset.key);L_.save();render()},
+ favCmp(t){const k=t.dataset.key,i=S.cmp.indexOf(k);if(i>=0)S.cmp.splice(i,1);else{if(S.cmp.length>=2)S.cmp.shift();S.cmp.push(k)}render()},
+ favCompare(){const a=S.favs.find(x=>x.key===S.cmp[0]),b=S.favs.find(x=>x.key===S.cmp[1]);if(a&&b)openSheet('Comparar looks',compareSheet(a,b))}
+};
+document.addEventListener('click',e=>{if(e.target.id==='overlay'){closeSheet();return}const t=e.target.closest('[data-act]');if(!t)return;const f=A[t.dataset.act];if(f)f(t,e)});
+document.addEventListener('input',e=>{const t=e.target;if(!t.dataset||!t.dataset.bind)return;let v=t.value;if(t.type==='number')v=v===''?0:Number(v);if(t.dataset.int)v=parseInt(v,10);L_.setPath(t.dataset.bind,v);
+  if(t.dataset.bind.indexOf('weather.')===0){S.weather.sample=false;S.weather.manual=true;const a=$('#adapt');if(a)a.innerHTML=L_.adaptHTML()}L_.save()});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.rerender==='add')refreshSheetAdd();
+  if(t.id==='photoInput'&&t.files[0])readImage(t.files[0]).then(r=>{const d=S.draft,f=t.files[0].name;d.foto=r.data;d.corNome=nearest(r.rgb);const g=guess(f);if(g){d.cat=g;d.formal=({camiseta:0,social:2,calca:1,bermuda:0,vestido:2,jaqueta:1,tenis:0,sapato:3,acessorio:1})[g];d.sub=''}if(!d.nome)d.nome=f.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ');refreshSheetAdd()}).catch(()=>toast('Não consegui ler essa imagem.'));
+  if(t.id==='evalPhoto'&&t.files[0])readImage(t.files[0]).then(r=>{S.av.photo=r.data;renderBody()}).catch(()=>toast('Não consegui ler essa imagem.'))});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#overlay').hidden){closeSheet();return}if(S.tab==='match'&&S.mode==='descobrir'&&$('#overlay').hidden&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){if(e.key==='ArrowRight')fling('like');if(e.key==='ArrowLeft')fling('nope')}});
+
+/* ===== leitura de imagem: cor dominante real, o restante é sugestão ===== */
+const GUESS=[['social',/social/i],['camiseta',/camiset|t-?shirt|blusa|regata|polo/i],['social',/camisa/i],['calca',/cal[cç]a|jeans|chino|pants/i],['bermuda',/bermuda|short/i],['vestido',/vestido|saia|dress|skirt/i],['jaqueta',/jaqueta|casaco|blazer|jacket|coat|moletom/i],['tenis',/t[eê]nis|sneaker/i],['sapato',/sapato|oxford|derby|loafer|mocassim/i],['acessorio',/rel[oó]gio|cinto|bon[eé]|bolsa|[oó]culos|watch|belt/i]];
+function guess(n){const g=GUESS.find(x=>x[1].test(n));return g?g[0]:null}
+function nearest(rgb){let best=null,bd=1e9;L_.COLORS.forEach(c=>{const n=parseInt(c[1].slice(1),16),r=n>>16&255,g=n>>8&255,b=n&255,d=Math.pow(r-rgb[0],2)*.3+Math.pow(g-rgb[1],2)*.59+Math.pow(b-rgb[2],2)*.11;if(d<bd){bd=d;best=c[0]}});return best}
+function readImage(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{const k=Math.min(1,260/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*k)),h=Math.max(1,Math.round(img.height*k)),c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(img,0,0,w,h);
+  const cx=Math.round(w*.25),cy=Math.round(h*.25),cw=Math.max(1,Math.round(w*.5)),ch=Math.max(1,Math.round(h*.5)),d=x.getImageData(cx,cy,cw,ch).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=16){r+=d[i];g+=d[i+1];b+=d[i+2];n++}
+  res({data:c.toDataURL('image/jpeg',.72),rgb:[r/n,g/n,b/n]})};img.onerror=rej;img.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
+
+buildTabs();render();
+})();
+</script>
+
+</body></html>
